@@ -33,3 +33,21 @@ pub fn part2 (input: &str) -> String {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn day1_part1 () {
+        assert_eq!(super::part1("+1\n+1\n+1"), "3");
+        assert_eq!(super::part1("+1\n+1\n-2"), "0");
+        assert_eq!(super::part1("-1\n-2\n-3"), "-6");
+    }
+
+    #[test]
+    fn day1_part2 () {
+        assert_eq!(super::part2("+1\n-1"), "0");
+        assert_eq!(super::part2("+3\n+3\n+4\n-2\n-4"), "10");
+        assert_eq!(super::part2("-6\n+3\n+8\n+5\n-6"), "5");
+        assert_eq!(super::part2("+7\n+7\n-2\n-7\n-4"), "14");
+    }
+}
