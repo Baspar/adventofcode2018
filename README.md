@@ -1,15 +1,29 @@
-# adventofcode2018 - Clojure
 
 
 ## Presentation
 
 https://adventofcode.com
 
-Central repo for a study group for AdventOfCode 2018 in Clojure
+Central repo for AdventOfCode 2018 in Clojure and Rust
+
+## Rust
+
+Rust version of the code is located under... `rust/`
+
+### Architecture
+
+For Day13, you can edit the following file:
+ - src/days/day13.rs (Containing the code)
+
+### Commands
+
+For Day13, you can use the following command:
+ - `cargo run day13 (cat path/to/day13.txt)` to launch the main code that'll run the input data
 
 ## Clojure
 
-CLojure version of the code is located under... `clojure/`
+Clojure version of the code is located under... `clojure/`
+
 ### Architecture
 
 For Day13, you can edit the following file:
