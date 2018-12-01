@@ -4,7 +4,7 @@
 (defn- format-input
   [string]
   (as-> string _
-    (split _ #" ")
+    (split _ #"\n")
     (map read-string _)))
 
 (defn part1

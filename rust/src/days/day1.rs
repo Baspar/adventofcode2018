@@ -1,7 +1,10 @@
 use std::collections::HashSet;
 
 fn read_input (input: &str) -> Vec<i32> {
-    input.split(" ").map(|s: &str| { s.parse().unwrap() }).collect()
+    input
+        .lines()
+        .map(|s: &str| { s.parse().unwrap() })
+        .collect()
 }
 
 pub fn part1 (input: &str) -> String {
