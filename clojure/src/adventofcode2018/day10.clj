@@ -7,8 +7,9 @@
 (defn part2
   [& args])
 
-(defn -main []
-  (let [input (-> "inputs/day10.txt" slurp trim trim-newline)]
+(defn -main [& args]
+  (let [input (or (first args)
+                  (-> "inputs/day10.txt" slurp trim trim-newline))]
     (println "input:" input)
     (println "Part1")
     (println (part1 input))
