@@ -1,11 +1,27 @@
 (ns adventofcode2018.day2
-  (:require [clojure.string :refer [trim trim-newline]]))
+  (:require [clojure.string :refer [trim trim-newline split]]))
+
+(defn- format-input
+  [input]
+  (split input #"\n"))
 
 (defn part1
-  [& args])
+  [args]
+  (let [inputs (format-input args)]
+    (->> inputs
+         (map
+           (fn [input]
+             (as-> input _
+               (frequencies _)
+               (vals _)
+               (into #{} _)
+               [(if (get _ 2) 1 0) (if (get _ 3) 1 0)])))
+         (reduce (fn [[a1 b1] [a2 b2]]
+                   [(+ a1 a2) (+ b1 b2)]))
+         (apply *))))
 
 (defn part2
-  [& args])
+  [args])
 
 (defn -main [& args]
   (let [input (or (first args)
