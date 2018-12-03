@@ -1,6 +1,7 @@
 use regex::Regex;
 use std::collections::HashMap;
 
+// Helper
 fn parse_input(input: &str) -> Vec<(i32, i32, i32, i32, i32)> {
     let regexp = Regex::new(r"#(\d+) @ (\d+),(\d+): (\d+)x(\d+)").unwrap();
     regexp.captures_iter(input)
@@ -15,8 +16,9 @@ fn parse_input(input: &str) -> Vec<(i32, i32, i32, i32, i32)> {
     .collect()
 }
 
+// Part1
 pub fn part1(input: &str) -> String {
-    // Parse i,put
+    // Parse input
     let squares = parse_input(input);
 
     // Generate complete position list
@@ -47,7 +49,50 @@ pub fn part1(input: &str) -> String {
     format!("{}", number)
 }
 
+// Part2
+fn overlap((_, x1_a, y1_a, w_a, h_a): (i32, i32, i32, i32, i32), (_, x1_b, y1_b, w_b, h_b): (i32, i32, i32, i32, i32)) -> bool {
+    let x2_a = x1_a + w_a - 1;
+    let y2_a = y1_a + h_a - 1;
+    let x2_b = x1_b + w_b - 1;
+    let y2_b = y1_b + h_b - 1;
+
+    // A totally on the left of B
+    if x1_a < x1_b && x2_a < x1_b { return false }
+
+    // A totally on the right of B
+    if x1_a > x2_b && x2_a > x2_b { return false }
+
+    // A totally above B
+    if y1_a < y1_b && y2_a < y1_b { return false }
+
+    // A totally below B
+    if y1_a > y2_b && y2_a > y2_b { return false }
+
+    // Contact zone
+    true
+}
 pub fn part2(input: &str) -> String {
+    // Parse input
+    let squares = parse_input(input);
+
+    // Check every pair of square to check for overlap
+    for i in 0..squares.len() {
+        let (id, _, _, _, _) = squares[i];
+        let mut do_not_overlap = true;
+        for j in 0..squares.len() {
+            let square1 = squares[i];
+            let square2 = squares[j];
+            if i != j && overlap(square1, square2) {
+                do_not_overlap = false;
+            }
+        }
+
+        // If no overlap at all, that's the one!
+        if do_not_overlap {
+            return format!("{}", id)
+        }
+    }
+
     return String::from("");
 }
 
@@ -55,11 +100,13 @@ pub fn part2(input: &str) -> String {
 mod tests {
     #[test]
     fn day3_part1 () {
-        assert_eq!(0, 0);
+        let input = "#1 @ 1,3: 4x4\n#2 @ 3,1: 4x4\n#3 @ 5,5: 2x2";
+        assert_eq!(super::part1(input), "4");
     }
 
     #[test]
     fn day3_part2 () {
-        assert_eq!(0, 0);
+        let input = "#1 @ 1,3: 4x4\n#2 @ 3,1: 4x4\n#3 @ 5,5: 2x2";
+        assert_eq!(super::part2(input), "3");
     }
 }
