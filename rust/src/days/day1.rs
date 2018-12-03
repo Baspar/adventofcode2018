@@ -10,11 +10,10 @@ fn read_input (input: &str) -> Vec<i32> {
 
 // Part1
 pub fn part1 (input: &str) -> String {
-    let mut tot = 0;
-    for i in read_input(input) {
-        tot += i;
-    }
-    return tot.to_string();
+    let tot: i32 = read_input(input)
+        .iter()
+        .fold(0i32, |a, b| { a + b });
+    format!("{}", tot)
 }
 
 // Part2
