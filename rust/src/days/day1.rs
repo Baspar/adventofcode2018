@@ -1,5 +1,6 @@
 use std::collections::HashSet;
 
+// Helper
 fn read_input (input: &str) -> Vec<i32> {
     input
         .lines()
@@ -7,6 +8,7 @@ fn read_input (input: &str) -> Vec<i32> {
         .collect()
 }
 
+// Part1
 pub fn part1 (input: &str) -> String {
     let mut tot = 0;
     for i in read_input(input) {
@@ -15,6 +17,7 @@ pub fn part1 (input: &str) -> String {
     return tot.to_string();
 }
 
+// Part2
 pub fn part2 (input: &str) -> String {
     let mut tot = 0;
     let mut seen = HashSet::new();
@@ -34,6 +37,7 @@ pub fn part2 (input: &str) -> String {
     }
 }
 
+// Tests
 #[cfg(test)]
 mod tests {
     #[test]

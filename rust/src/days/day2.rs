@@ -39,19 +39,51 @@ pub fn part1 (input: &str) -> String {
     format!("{}", result)
 }
 
+// Part 2
+fn distance_of_1(w1: &str, w2: &str) -> bool {
+    let mut distance = 0;
+    let mut _w1 = w1.chars();
+    let mut _w2 = w2.chars();
+
+    loop {
+        match (_w1.next(), _w2.next()) {
+            (Some(l1), Some(l2)) => { if l1 != l2 { distance += 1; } },
+            _ => { break; }
+        }
+    }
+
+    distance == 1
+}
+fn common_letters(w1: &str, w2: &str) -> String {
+    let mut _w2 = w2.chars();
+    w1.chars()
+        .filter(|c| { *c == _w2.next().unwrap() })
+        .collect()
+}
 pub fn part2 (input: &str) -> String {
-    return String::from(input);
+    for w1 in input.lines() {
+        for w2 in input.lines() {
+            if distance_of_1(w1, w2) {
+                return common_letters(&w1, &w2);
+            }
+        }
+    };
+
+    String::from("None found")
 }
 
+// Tests
 #[cfg(test)]
 mod tests {
     #[test]
     fn day2_part1 () {
-        assert_eq!(0, 0);
+        let input = "abcdef\nbababc\nabbcde\nabcccd\naabcdd\nabcdee\nababab";
+        assert_eq!(super::part1(input), "12");
     }
 
     #[test]
     fn day2_part2 () {
-        assert_eq!(0, 0);
+        let input = "abcde\nfghij\nklmno\npqrst\nfguij\naxcye\nwvxyz";
+        assert_eq!(super::part2(input), "fgij");
     }
 }
