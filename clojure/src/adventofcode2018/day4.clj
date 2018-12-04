@@ -23,8 +23,6 @@
                :else (-> m
                          (assoc :instruction :start-shift)
                          (assoc :guard (read-string guard)))))) _)))
-
-;; Part1
 (defn- sort-date
   [_d1 _d2]
   (loop [d1 (_d1 :time)
@@ -34,7 +32,7 @@
       (< (first d1) (first d2)) -1
       (> (first d1) (first d2)) 1
       :else (recur (rest d1) (rest d2)))))
-(defn- group-by-shift
+(defn- fold-by-shift
   [data]
   (as-> data _
        (partition-by :guard _)
@@ -68,49 +66,63 @@
                 {:guard guard
                  :sleep-time total-sleep-time
                  :ranges (mapv :range shifts)})))))
-(defn- find-best-minute
+(defn- find-all-minutes
   [{:keys [guard ranges]}]
-  (let [[froms tos] (apply mapv vector ranges)
-        sorted-froms (sort froms)
-        sorted-tos (sort tos)]
-    (loop [froms sorted-froms
-           tos sorted-tos
-           current-count 0
-           max-count 0
-           max-at -1]
-      (if (or (empty? tos) (empty? froms))
-        {:guard guard
-         :max-count max-count
-         :max-at max-at}
-        (let [take-from-tos? (< (first tos) (first froms))
-              when-take-from-tos [froms (rest tos) (first tos) (dec current-count)]
-              when-take-from-froms [(rest froms) tos (first froms) (inc current-count)]
-              [next-froms next-tos next-max-at next-current-count] (if take-from-tos?
-                                                                     when-take-from-tos
-                                                                     when-take-from-froms)
-              update-max? (< max-count next-current-count)]
-          (recur next-froms
-                 next-tos
-                 next-current-count
-                 (if update-max? next-current-count max-count)
-                 (if update-max? next-max-at max-at)))))))
+  (let [all-minutes (->> ranges
+                         (mapcat (fn [[from to]] (range from to)))
+                         (frequencies))]
+    {:guard guard
+     :all-minutes all-minutes}))
+
+;; Part1
+(defn- find-best-minute
+  [{:keys [guard all-minutes]}]
+  (let [[best-minute _number-of-time] (->> all-minutes
+                                           (sort-by second)
+                                           (last))]
+    {:guard guard
+     :best-minute best-minute}))
 (defn part1
   [args]
   (let [best-shift (->> args
                         (format-input)
                         (sort sort-date)
-                        (group-by-shift)
+                        (fold-by-shift)
                         (map compute-sleep)
                         (group-by-guard)
                         (sort-by :sleep-time)
                         (last)
+                        (find-all-minutes)
                         (find-best-minute))]
     (* (best-shift :guard)
-       (best-shift :max-at))))
+       (best-shift :best-minute))))
 
 ;; Part2
+(defn- find-most-freq-sleepy-minute
+  [guards-sleep-freq]
+  (->> guards-sleep-freq
+       (mapcat (fn [{:keys [guard all-minutes]}]
+                 (map (fn [[minute freq]] {:guard guard
+                                           :minute minute
+                                           :freq freq})
+                      all-minutes)))
+       (sort-by :freq)
+       (last)))
 (defn part2
-  [args])
+  [args]
+  (let [best-shift (->> args
+                        (format-input)
+                        (sort sort-date)
+                        (fold-by-shift)
+                        (map compute-sleep)
+                        (group-by-guard)
+                        (map find-all-minutes)
+                        (find-most-freq-sleepy-minute)
+                        ;; (last)
+                        )]
+    (* (best-shift :guard)
+       (best-shift :minute))
+    ))
 
 (defn -main [& args]
   (let [input (or (first args)
