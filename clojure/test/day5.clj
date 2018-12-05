@@ -12,4 +12,4 @@
 
 (deftest test-part-2
   (testing "FIXME, I fail."
-    (is (= 0 1))))
+    (is (= (part2 "dabAcCaCBAcCcaDA") 4))))
