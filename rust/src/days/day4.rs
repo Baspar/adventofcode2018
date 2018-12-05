@@ -68,20 +68,22 @@ fn parse_input(input: &str) -> Vec<Vec<SleepPeriod>> {
 
     out
 }
-
-// Part1
-pub fn part1 (input: &str) -> String {
-    let shifts = parse_input(input);
-
+fn get_total_sleep(shifts: &Vec<Vec<SleepPeriod>>) -> HashMap<u64, u64> {
     let mut total_sleep: HashMap<u64, u64> = HashMap::new();
-    let mut minute_frequencies: HashMap<u64, HashMap<u64, u64>> = HashMap::new();
     for shift in shifts {
         for sleep_period in shift {
             // Add total sleep time per guard
             let iter1 = total_sleep.entry(sleep_period.guard).or_insert(0);
             *iter1 += sleep_period.min_elapsed();
+        }
+    }
 
-            // Add minute slept per guard
+    total_sleep
+}
+fn get_minutes_frequencies(shifts: &Vec<Vec<SleepPeriod>>) -> HashMap<u64, HashMap<u64, u64>> {
+    let mut minute_frequencies: HashMap<u64, HashMap<u64, u64>> = HashMap::new();
+    for shift in shifts {
+        for sleep_period in shift {
             for minute in sleep_period.from_date.min..sleep_period.to_date.min {
                 let iter2 = minute_frequencies.entry(sleep_period.guard).or_insert(HashMap::new());
                 let iter3 = iter2.entry(minute).or_insert(0);
@@ -90,25 +92,39 @@ pub fn part1 (input: &str) -> String {
         }
     }
 
+    minute_frequencies
+}
+
+// Part1
+pub fn part1 (input: &str) -> String {
+    let shifts = parse_input(input);
+
+    let total_sleep = get_total_sleep(&shifts);
+    let minute_frequencies = get_minutes_frequencies(&shifts);
+
     // Find best guard
     let mut best_guard: u64 = 0;
     let mut guard_sleep: u64 = 0;
-    for (guard, sleep_time) in total_sleep.iter() {
-        if guard_sleep < *sleep_time {
-            guard_sleep = *sleep_time;
-            best_guard = *guard;
+    for (guard, sleep_time) in total_sleep {
+        if guard_sleep < sleep_time {
+            guard_sleep = sleep_time;
+            best_guard = guard;
         }
     }
 
-    // Find best min
+    // Find best minute
     let mut best_min: u64 = 0;
     let mut best_freq:u64 = 0;
-    let guard_freq = minute_frequencies.entry(best_guard).or_insert(HashMap::new());
-    for (min, freq) in guard_freq.iter() {
-        if best_freq < *freq {
-            best_freq = *freq;
-            best_min = *min;
-        }
+    match minute_frequencies.get(&best_guard) {
+        Some(guard_freq) => {
+            for (min, freq) in guard_freq {
+                if best_freq < *freq {
+                    best_freq = *freq;
+                    best_min = *min;
+                }
+            }
+        },
+        _ => ()
     }
 
     format!("{}", best_guard * best_min)
@@ -116,7 +132,25 @@ pub fn part1 (input: &str) -> String {
 
 // Part2
 pub fn part2 (input: &str) -> String {
-    format!("input")
+    let shifts = parse_input(input);
+
+    let minute_frequencies = get_minutes_frequencies(&shifts);
+
+    // Find best minute
+    let mut best_min: u64 = 0;
+    let mut best_freq: u64 = 0;
+    let mut best_guard: u64 = 0;
+    for (guard, guard_freq) in minute_frequencies {
+        for (min, freq) in guard_freq {
+            if best_freq < freq {
+                best_freq = freq;
+                best_min = min;
+                best_guard = guard;
+            }
+        }
+    }
+
+    format!("{}", best_guard * best_min)
 }
 
 #[cfg(test)]
