@@ -1,6 +1,7 @@
-pub fn part1 (input: &str) -> String {
+// Helper
+fn collapse_len(characters: &Vec<char>) -> usize {
     let mut collapsed_polymer: Vec<char> = Vec::new();
-    for i in input.trim().chars() {
+    for &i in characters {
         // Push first letter onto the stack
         if collapsed_polymer.is_empty() {
             collapsed_polymer.push(i);
@@ -15,11 +16,30 @@ pub fn part1 (input: &str) -> String {
             }
         }
     }
-    format!("{:?}", collapsed_polymer.len())
+    collapsed_polymer.len()
 }
 
-pub fn part2 (input: &str) -> String {
-    return String::from(input);
+// Part1
+pub fn part1(input: &str) -> String {
+    let characters = input.trim().chars().collect();
+    format!("{}", collapse_len(&characters))
+}
+
+// Part2
+fn collapse_len_but(exclude_letter: &char, input: &str) -> usize {
+    let filtered_input = input.trim().chars().filter(|c| { c.to_ascii_uppercase() != *exclude_letter }).collect();
+    collapse_len(&filtered_input)
+}
+
+pub fn part2(input: &str) -> String {
+    let mut collapsed_polymers: Vec<usize> = String::from("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+        .chars()
+        .map(|letter| { collapse_len_but(&letter, input) })
+        .collect();
+
+    // Sort and get smallest polymer
+    collapsed_polymers.sort();
+    format!("{}", collapsed_polymers.first().unwrap())
 }
 
 #[cfg(test)]
