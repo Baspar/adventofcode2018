@@ -4,7 +4,11 @@
 
 (deftest test-part-1
   (testing "FIXME, I fail."
-    (is (= 0 1))))
+    (is (= (part1 "aA") 0))
+    (is (= (part1 "abBA") 0))
+    (is (= (part1 "abAB") 4))
+    (is (= (part1 "aabAAB") 6))
+    (is (= (part1 "dabAcCaCBAcCcaDA") 10))))
 
 (deftest test-part-2
   (testing "FIXME, I fail."

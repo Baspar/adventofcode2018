@@ -1,8 +1,20 @@
 (ns adventofcode2018.day5
-  (:require [clojure.string :refer [trim trim-newline]]))
+  (:require [clojure.string :refer [trim trim-newline upper-case]]))
 
 (defn part1
-  [& args])
+  [input]
+  (let [units (map identity input)]
+    (as-> units <>
+      (reduce (fn [stack letter]
+                (cond
+                  (empty? stack) (list letter)
+                  (= (first stack) letter) (conj stack letter)
+                  (not= (upper-case (first stack)) (upper-case letter)) (conj stack letter)
+                  :else (pop stack)))
+              (list)
+              <>)
+      (reverse <>)
+      (count <>))))
 
 (defn part2
   [& args])
