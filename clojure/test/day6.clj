@@ -4,7 +4,12 @@
 
 (deftest test-part-1
   (testing "FIXME, I fail."
-    (is (= 0 1))))
+    (is (= (part1 "1, 1
+1, 6
+8, 3
+3, 4
+5, 5
+8, 9") 17))))
 
 (deftest test-part-2
   (testing "FIXME, I fail."
