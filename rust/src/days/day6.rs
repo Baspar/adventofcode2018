@@ -4,8 +4,8 @@ use std::collections::HashMap;
 // Type
 #[derive(Debug)]
 enum ClosestTarget {
-    Tie,
-    Target(usize)
+    Tie(usize),
+    Target(usize, i32)
 }
 
 // Helper
@@ -54,9 +54,9 @@ fn get_min_distance(targets: &Vec<(i32, i32)>, coord: (i32, i32)) -> ClosestTarg
     }
 
     if is_tie {
-        ClosestTarget::Tie
+        ClosestTarget::Tie(min_target)
     } else {
-        ClosestTarget::Target(min_target)
+        ClosestTarget::Target(min_target, min_distance)
     }
 }
 
@@ -74,9 +74,9 @@ pub fn part1(input: &str) -> String {
             let min_distance = get_min_distance(&targets, (x, y));
             match min_distance {
                 // If Tie, no action
-                ClosestTarget::Tie => {},
+                ClosestTarget::Tie(_) => {},
                 // If target:
-                ClosestTarget::Target(target_id) => {
+                ClosestTarget::Target(target_id, _) => {
                     // If on the border, consider as a infinite zone
                     if x == 0 || y == 0 || x == width || y == height {
                         infinite_targets.insert(target_id);
@@ -102,7 +102,24 @@ pub fn part1(input: &str) -> String {
 
 // Part2
 pub fn part2(input: &str) -> String {
-    return String::from(input);
+    // Parse
+    let (targets, width, height) = parse_input(input);
+
+    // Generate infinite zones and zone size
+    const MAX_DIST: i32 = 10000;
+    let mut valid_cell: i32 = 0;
+    for x in 0..width {
+        for y in 0..height {
+            let sum_distances = targets.iter()
+                .map(|&target_coord| { distance(target_coord, (x, y)) })
+                .fold(0, |a, b| { a + b });
+            if sum_distances < MAX_DIST {
+                valid_cell += 1;
+            }
+        }
+    }
+
+    format!("{}", valid_cell)
 }
 
 #[cfg(test)]
@@ -119,6 +136,11 @@ mod tests {
 
     #[test]
     fn day6_part2 () {
-        assert_eq!(0, 0);
+        assert_eq!(super::part2("1, 1
+1, 6
+8, 3
+3, 4
+5, 5
+8, 9"), "16");
     }
 }
