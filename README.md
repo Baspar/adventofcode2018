@@ -1,4 +1,4 @@
-<div style="text-align: center">
+<div align="center">
     <h1>
     <span style="font-size: 50px">🎄</span>
     Advent of Code 2018
@@ -9,7 +9,7 @@
 
 <br />
 
-<div style="text-align: center; display: flex">
+<div align="center" style="display: flex">
 
 |          | Rust   | Clojure   |
 | -        | ------ | --------- |
