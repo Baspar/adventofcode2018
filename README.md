@@ -1,41 +1,48 @@
+<div style="text-align: center">
+    <h1>
+    <span style="font-size: 50px">🎄</span>
+    Advent of Code 2018
+    <span style="font-size: 50px">🎄</span>
+    </h1>
+    <div><b><a href="https://github.com/Baspar/adventofcode2018/tree/master/clojure">Clojure</a> | <a href="https://github.com/Baspar/adventofcode2018/tree/master/rust">Rust</a></b></div>
+</div>
+
+<br />
+
+<div style="text-align: center; display: flex">
+
+|          | Rust   | Clojure   |
+| -        | ------ | --------- |
+| **Day1** | ⭐⭐   | ⭐⭐      |
+| **Day2** | ⭐⭐   | ⭐⭐      |
+| **Day3** | ⭐⭐   | ⭐⭐      |
+| **Day4** | ⭐⭐   | ⭐⭐      |
+| **Day5** | ⭐⭐   | ⭐⭐      |
+| **Day6** | ⭐⭐   | ⭐        |
+| **Day7** |        | ⭐⭐      |
+| **Day8** |        | ⭐⭐      |
+
+|           | Rust   | Clojure   |
+| -         | ------ | --------- |
+| **Day9**  |        |           |
+| **Day10** |        |           |
+| **Day11** |        |           |
+| **Day12** |        |           |
+| **Day13** |        |           |
+| **Day14** |        |           |
+| **Day15** |        |           |
+| **Day16** |        |           |
 
 
-## Presentation
+|           | Rust   | Clojure   |
+| -         | ------ | --------- |
+| **Day17** |        |           |
+| **Day18** |        |           |
+| **Day19** |        |           |
+| **Day20** |        |           |
+| **Day21** |        |           |
+| **Day22** |        |           |
+| **Day23** |        |           |
+| **Day24** |        |           |
 
-https://adventofcode.com
-
-Central repo for AdventOfCode 2018 in Clojure and Rust
-
-## Rust
-
-Rust version of the code is located under... `rust/`
-
-### Architecture
-
-For Day1, you can edit the following file:
- - src/days/day1.rs (Containing the code)
- - src/days/day1.rs (Containing the test set)
-
-### Commands
-
-For Day1, you can use the following command:
- - `cargo run day1` to launch the main code that'll run the input data
- - `cargo run day1 "INPUT DATA"` to launch the main code that'll run the given input data
- - `cargo test day1` or `cargo test day1:` to launch the test set
-
-## Clojure
-
-Clojure version of the code is located under... `clojure/`
-
-### Architecture
-
-For Day1, you can edit the following file:
- - src/adventofcode2017/day1.clj (Containing the code)
- - test/day1.clj (Containing the test set)
-
-### Commands
-
-For Day1, you can use the following command:
- - `lein day1` to launch the main code that'll run the input data
- - `lein day1 "INPUT DATA"` to launch the main code that'll run the given input data
- - `lein test day1` to launch the test set for day1
+</div>
