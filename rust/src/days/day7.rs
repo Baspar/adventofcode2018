@@ -46,7 +46,7 @@ pub fn part1(input: &str) -> String {
 }
 
 pub fn part2(input: &str) -> String {
-    String::from("0")
+    String::from(input)
 }
 
 #[cfg(test)]
