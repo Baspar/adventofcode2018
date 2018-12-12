@@ -9,16 +9,42 @@ fn compute_power(serial: i64, x: i64, y: i64) -> i64 {
     power = power - 5;
     power
 }
-
-// Part1
-pub fn part1 (input: &str) -> String {
+fn init_grid(input: &str) -> Vec<Vec<i64>> {
     let serial: i64 = input.trim().parse().unwrap();
     let mut grid = vec![vec![0; 300]; 300];
     for i in 0..300 {
         for j in 0..300 {
             grid[i][j] = compute_power(serial, i as i64, j as i64);
         }
+    };
+
+    grid
+}
+fn init_partial_sum_grid(input: &str) -> Vec<Vec<i64>> {
+    let serial: i64 = input.trim().parse().unwrap();
+    let mut grid = vec![vec![0; 300]; 300];
+
+    for i in 0..300 {
+        for j in 0..300 {
+            grid[i][j] = compute_power(serial, i as i64, j as i64);
+            grid[i][j] += if i == 0 && j == 0 {
+                0
+            } else if i == 0 {
+                grid[i][j-1]
+            } else if j == 0 {
+                grid[i-1][j]
+            } else {
+                grid[i-1][j] + grid[i][j-1] - grid[i-1][j-1]
+            }
+        }
     }
+
+    grid
+}
+
+// Part1
+pub fn part1 (input: &str) -> String {
+    let grid = init_grid(input);
 
     let mut max_power = grid[0][0];
     let mut max_coord = (0, 0);
@@ -43,7 +69,37 @@ pub fn part1 (input: &str) -> String {
 
 // Part2
 pub fn part2 (input: &str) -> String {
-    return String::from(input);
+    let grid = init_partial_sum_grid(input);
+
+    let mut max_size = 1;
+    let mut max_x = 1;
+    let mut max_y = 1;
+    let mut max_power = grid[0][0];
+
+    for size in 1..301 {
+        for x in 0..300-size+1 {
+            for y in 0..300-size+1 {
+                let power = if x == 0 && y == 0 {
+                    grid[x+size-1][y+size-1]
+                } else if x == 0 {
+                    grid[x+size-1][y+size-1] - grid[x+size-1][y-1]
+                } else if y == 0 {
+                    grid[x+size-1][y+size-1] - grid[x-1][y+size-1]
+                } else {
+                    grid[x+size-1][y+size-1] - grid[x-1][y+size-1] - grid[x+size-1][y-1] + grid[x-1][y-1]
+                };
+
+                if power > max_power {
+                    max_size = size;
+                    max_x = x+1;
+                    max_y = y+1;
+                    max_power = power;
+                }
+            }
+        }
+    }
+
+    format!("{},{},{}", max_x, max_y, max_size)
 }
 
 #[cfg(test)]
@@ -55,6 +111,7 @@ mod tests {
 
     #[test]
     fn day11_part2 () {
-        assert_eq!(0, 0);
+        assert_eq!(super::part2("18"), "90,269,16");
+        assert_eq!(super::part2("42"), "232,251,12");
     }
 }
