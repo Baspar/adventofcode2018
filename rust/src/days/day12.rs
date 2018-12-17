@@ -112,7 +112,29 @@ pub fn part1 (input: &str) -> String {
 
 // Part2
 pub fn part2 (input: &str) -> String {
-    return String::from(input);
+    let Data{ mut flowers, recipes } = parse_input(input);
+    let mut min_index = 0;
+
+    // Run 100 generations
+    for _ in 0..100 {
+        let res = alter_flower(flowers, min_index, &recipes);
+        flowers = res.0;
+        min_index = res.1;
+    }
+
+    // Get score gen 100
+    let score_at_gen100 = score(&flowers, &min_index);
+
+    // Get score gen 101
+    let res = alter_flower(flowers, min_index, &recipes);
+    flowers = res.0;
+    min_index = res.1;
+    let score_at_gen101 = score(&flowers, &min_index);
+
+    // Since a pattern start at iteration 100 (Visualy checked),
+    // we can compute in advance the response
+    let score_at_gen_50_billions = score_at_gen100 + (score_at_gen101 - score_at_gen100) * (50_000_000_000 - 100);
+    return format!("{}", score_at_gen_50_billions);
 }
 
 #[cfg(test)]
