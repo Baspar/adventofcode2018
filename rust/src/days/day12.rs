@@ -1,12 +1,7 @@
 use regex::Regex;
-#[derive(Debug,Clone)]
-enum Change {
-    NoChange,
-    Change(bool)
-}
 struct Data {
     flowers: Vec<bool>,
-    recipes: Vec<Change>
+    recipes: Vec<bool>
 }
 
 // Parse input into Data
@@ -24,7 +19,7 @@ fn parse_input(input: &str) -> Data {
 
     // Find recipes
     let re_recipe = Regex::new("([.#]+) => ([.#])").unwrap();
-    let mut recipes = vec![Change::NoChange; 32];
+    let mut recipes = vec![false; 32];
     for recipe in re_recipe.captures_iter(input) {
         let from = &recipe[1].chars()
             .rev()
@@ -32,7 +27,7 @@ fn parse_input(input: &str) -> Data {
             .map(|(i, c): (usize, char)| { if c == '#' { 2_usize.pow(i as u32) } else { 0 }})
             .fold(0, |a, b| { a + b });
         let to = &recipe[2] == "#";
-        recipes[*from] = Change::Change(to);
+        recipes[*from] = to;
     };
 
     Data{ flowers: flowers, recipes: recipes }
@@ -45,7 +40,7 @@ fn score(flowers: &Vec<bool>, min_index: &i64) -> i64 {
         .sum()
 }
 // Run one generation
-fn alter_flower(flowers: Vec<bool>, min_index: i64, recipes: &Vec<Change>) -> (Vec<bool>, i64) {
+fn alter_flower(flowers: Vec<bool>, min_index: i64, recipes: &Vec<bool>) -> (Vec<bool>, i64) {
     let mut new_min_index = min_index;
     let mut new_flowers:Vec<bool> = vec![];
 
@@ -53,17 +48,11 @@ fn alter_flower(flowers: Vec<bool>, min_index: i64, recipes: &Vec<Change>) -> (V
 
     // Special check for first element
     value = (value % 16) * 2 + if flowers[0] {1} else {0};
-    match recipes[value] {
-        Change::Change(true) => { new_min_index -= 1; new_flowers.push(true) },
-        _ => ()
-    }
+    if recipes[value] { new_min_index -= 1; new_flowers.push(true) }
 
     // Special check for first element
     value = (value % 16) * 2 + if flowers[1] {1} else {0};
-    match recipes[value] {
-        Change::Change(true) => { new_min_index -= 1; new_flowers.push(true) },
-        _ => ()
-    }
+    if recipes[value] { new_min_index -= 1; new_flowers.push(true) }
 
     // Normal check for rest array
     for index in 2..flowers.len() + 2 {
@@ -72,25 +61,16 @@ fn alter_flower(flowers: Vec<bool>, min_index: i64, recipes: &Vec<Change>) -> (V
         value *= 2;
         value += if flower {1} else {0};
 
-
-        match recipes[value] {
-            Change::NoChange => new_flowers.push(false),
-            Change::Change(has_flower) => new_flowers.push(has_flower)
-        }
+        new_flowers.push(recipes[value]);
     }
 
     // Special check for n+1
     value = (value % 16) * 2;
-    match recipes[value] {
-        Change::Change(true) => new_flowers.push(true),
-        _ => ()
-    }
+    if recipes[value] { new_flowers.push(true) }
+
     // Special check for n+2
     value = (value % 16) * 2;
-    match recipes[value] {
-        Change::Change(true) => new_flowers.push(true),
-        _ => ()
-    }
+    if recipes[value] { new_flowers.push(true) }
 
     (new_flowers, new_min_index)
 }
