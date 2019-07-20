@@ -82,7 +82,6 @@ fn flow(map: &Vec<Vec<Cell>>, y: usize, x: usize) -> (usize, usize) {
     let mut min_x = x;
     let mut max_x = x;
 
-    println!("Flow from {}, {}", x, y);
     while min_x > 0 {
         // If cell not accessible, stop
         match map[y][min_x - 1] {
@@ -121,7 +120,6 @@ fn flow(map: &Vec<Vec<Cell>>, y: usize, x: usize) -> (usize, usize) {
 
     return (min_x, max_x);
 }
-
 fn iteration(map: &mut Vec<Vec<Cell>>, sources: &mut LinkedList<(usize, usize)>) {
     let (source_y, source_x) = sources.pop_front().unwrap();
 
@@ -162,7 +160,6 @@ fn iteration(map: &mut Vec<Vec<Cell>>, sources: &mut LinkedList<(usize, usize)>)
         }
     }
 }
-
 fn display(map: &Vec<Vec<Cell>>) {
     for row in map.iter() {
         for cell in row.iter() {
@@ -186,7 +183,7 @@ pub fn part1 (input: &str) -> String {
         iteration(&mut map, &mut sources);
     }
 
-    display(&map);
+    // display(&map);
 
     let mut water_amount = 0;
     for y in min_y..map.len() {
@@ -202,7 +199,27 @@ pub fn part1 (input: &str) -> String {
 }
 
 pub fn part2 (input: &str) -> String {
-    return String::from("");
+    let (mut map, min_x, min_y) = parse_input(input);
+    let mut sources = LinkedList::new();
+    sources.push_back((0, 500 - (min_x - 1)));
+    map[0][500 - (min_x - 1)] = Cell::FlowingWater;
+    while !sources.is_empty() {
+        iteration(&mut map, &mut sources);
+    }
+
+    // display(&map);
+
+    let mut water_amount = 0;
+    for y in min_y..map.len() {
+        for cell in map[y].iter() {
+            match cell {
+                Cell::StillWater => water_amount += 1,
+                _ => {}
+            }
+        }
+    }
+
+    return format!("{}", water_amount);
 }
 
 #[cfg(test)]
@@ -221,6 +238,13 @@ y=13, x=498..504"), "57");
 
     #[test]
     fn day17_part2 () {
-        assert_eq!(0, 0);
+        assert_eq!(super::part2("x=495, y=2..7
+y=7, x=495..501
+x=501, y=3..7
+x=498, y=2..4
+x=506, y=1..2
+x=498, y=10..13
+x=504, y=10..13
+y=13, x=498..504"), "29");
     }
 }
