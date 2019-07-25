@@ -1,4 +1,5 @@
 use std::cmp::{min,max};
+use std::collections::HashMap;
 
 #[derive(Debug,Clone)]
 enum Cell {
@@ -78,8 +79,21 @@ fn count_all(map: &Vec<Vec<Cell>>) -> (usize, usize) {
             }
         }
     }
-
     return ( nb_tree, nb_lumber )
+}
+fn hash(map: &Vec<Vec<Cell>>) -> String {
+    let mut out = String::new();
+    for row in map {
+        for cell in row {
+            out.push(match cell {
+                Cell::Tree => '|',
+                Cell::Lumber => '#',
+                Cell::Ground => '.'
+            })
+        }
+    }
+
+    return out;
 }
 
 pub fn part1 (input: &str) -> String {
@@ -93,8 +107,26 @@ pub fn part1 (input: &str) -> String {
     return format!("{}", nb_lumber * nb_tree);
 }
 
-pub fn part2 (_input: &str) -> String {
-    return String::from("");
+pub fn part2 (input: &str) -> String {
+    let mut map = parse_input(input);
+    let mut i = 0;
+    let mut first_seen = HashMap::new();
+    let end = 1000000000;
+    while i < end {
+        let h = hash(&map);
+        if i < end/2 && first_seen.contains_key(&h) {
+            let previous_time = first_seen[&h];
+            let loop_size = i - previous_time;
+            while i + loop_size < end { i += loop_size }
+        } else {
+            first_seen.insert(h, i);
+            iteration(&mut map);
+            i += 1;
+        }
+    }
+
+    let ( nb_tree, nb_lumber ) = count_all(&map);
+    return format!("{}", nb_lumber * nb_tree);
 }
 
 #[cfg(test)]
