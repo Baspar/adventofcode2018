@@ -1,14 +1,15 @@
 use std::cmp::{min,max};
 use std::collections::HashMap;
 
-#[derive(Debug,Clone)]
+#[derive(Debug,Clone,Hash,PartialEq,Eq)]
 enum Cell {
     Ground,
     Tree,
     Lumber
 }
+type Map = Vec<Vec<Cell>>;
 
-fn parse_input (input: &str) -> Vec<Vec<Cell>> {
+fn parse_input (input: &str) -> Map {
     let mut map = Vec::new();
     for line in input.lines() {
         let mut row = Vec::new();
@@ -24,7 +25,7 @@ fn parse_input (input: &str) -> Vec<Vec<Cell>> {
     }
     return map;
 }
-fn get_neighbour(map: &Vec<Vec<Cell>>, c_y: usize, c_x: usize) -> (usize, usize) {
+fn get_neighbour(map: &Map, c_y: usize, c_x: usize) -> (usize, usize) {
     let mut nb_tree = 0;
     let mut nb_lumber = 0;
     for y in (max(c_y, 1) - 1)..min(c_y + 2, map.len()) {
@@ -41,7 +42,7 @@ fn get_neighbour(map: &Vec<Vec<Cell>>, c_y: usize, c_x: usize) -> (usize, usize)
 
     return ( nb_tree, nb_lumber )
 }
-fn iteration(map: &mut Vec<Vec<Cell>>) {
+fn iteration(map: &mut Map) {
     let old_map = map.clone();
 
     for y in 0..old_map.len() {
@@ -55,19 +56,7 @@ fn iteration(map: &mut Vec<Vec<Cell>>) {
         }
     }
 }
-fn display(map: &Vec<Vec<Cell>>) {
-    for row in map {
-        for cell in row {
-            match cell {
-                Cell::Ground => print!("."),
-                Cell::Tree => print!("|"),
-                Cell::Lumber => print!("#")
-            }
-        }
-        println!("")
-    }
-}
-fn count_all(map: &Vec<Vec<Cell>>) -> (usize, usize) {
+fn count_all(map: &Map) -> (usize, usize) {
     let mut nb_tree = 0;
     let mut nb_lumber = 0;
     for row in map {
@@ -81,20 +70,18 @@ fn count_all(map: &Vec<Vec<Cell>>) -> (usize, usize) {
     }
     return ( nb_tree, nb_lumber )
 }
-fn hash(map: &Vec<Vec<Cell>>) -> String {
-    let mut out = String::new();
-    for row in map {
-        for cell in row {
-            out.push(match cell {
-                Cell::Tree => '|',
-                Cell::Lumber => '#',
-                Cell::Ground => '.'
-            })
-        }
-    }
-
-    return out;
-}
+// fn display(map: &Map) {
+//     for row in map {
+//         for cell in row {
+//             match cell {
+//                 Cell::Ground => print!("."),
+//                 Cell::Tree => print!("|"),
+//                 Cell::Lumber => print!("#")
+//             }
+//         }
+//         println!("")
+//     }
+// }
 
 pub fn part1 (input: &str) -> String {
     let mut map = parse_input(input);
@@ -111,15 +98,14 @@ pub fn part2 (input: &str) -> String {
     let mut map = parse_input(input);
     let mut i = 0;
     let mut first_seen = HashMap::new();
-    let end = 1000000000;
+    let end = 1_000_000_000;
     while i < end {
-        let h = hash(&map);
-        if i < end/2 && first_seen.contains_key(&h) {
-            let previous_time = first_seen[&h];
+        if i < end/2 && first_seen.contains_key(&map) {
+            let previous_time = first_seen[&map];
             let loop_size = i - previous_time;
             while i + loop_size < end { i += loop_size }
         } else {
-            first_seen.insert(h, i);
+            first_seen.insert(map.clone(), i);
             iteration(&mut map);
             i += 1;
         }

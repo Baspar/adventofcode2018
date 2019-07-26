@@ -160,19 +160,19 @@ fn iteration(map: &mut Vec<Vec<Cell>>, sources: &mut LinkedList<(usize, usize)>)
         }
     }
 }
-fn display(map: &Vec<Vec<Cell>>) {
-    for row in map.iter() {
-        for cell in row.iter() {
-            match cell {
-                Cell::Empty => print!(" "),
-                Cell::Wall => print!("█"),
-                Cell::FlowingWater => print!("░"),
-                Cell::StillWater => print!("▒")
-            }
-        }
-        println!("");
-    }
-}
+// fn display(map: &Vec<Vec<Cell>>) {
+//     for row in map.iter() {
+//         for cell in row.iter() {
+//             match cell {
+//                 Cell::Empty => print!(" "),
+//                 Cell::Wall => print!("█"),
+//                 Cell::FlowingWater => print!("░"),
+//                 Cell::StillWater => print!("▒")
+//             }
+//         }
+//         println!("");
+//     }
+// }
 
 pub fn part1 (input: &str) -> String {
     let (mut map, min_x, min_y) = parse_input(input);

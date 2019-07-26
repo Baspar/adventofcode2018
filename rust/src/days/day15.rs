@@ -88,7 +88,7 @@ pub fn part1 (input: &str) -> String {
 }
 
 // Part2
-pub fn part2 (input: &str) -> String {
+pub fn part2 (_input: &str) -> String {
     format!("")
 }
 
