@@ -1,49 +1,29 @@
 use regex::Regex;
+use std::io::{stdin,Read};
 
-enum Instruction {
-    Addr(usize, usize, usize),
-    Addi(usize, usize, usize),
-    Mulr(usize, usize, usize),
-    Muli(usize, usize, usize),
-    Banr(usize, usize, usize),
-    Bani(usize, usize, usize),
-    Borr(usize, usize, usize),
-    Bori(usize, usize, usize),
-    Setr(usize, usize, usize),
-    Seti(usize, usize, usize),
-    Gtir(usize, usize, usize),
-    Gtri(usize, usize, usize),
-    Gtrr(usize, usize, usize),
-    Eqir(usize, usize, usize),
-    Eqri(usize, usize, usize),
-    Eqrr(usize, usize, usize),
-    Error()
-}
-
-
-fn apply_opcode(registers: &mut [usize; 6], opcode: &Instruction) {
+fn apply_opcode(registers: &mut [usize; 6], opcode: &(&str, usize, usize, usize)) {
     match *opcode {
-        Instruction::Addr(a, b, c) => registers[c] = registers[a] + registers[b],
-        Instruction::Addi(a, b, c) => registers[c] = registers[a] + b,
-        Instruction::Mulr(a, b, c) => registers[c] = registers[a] * registers[b],
-        Instruction::Muli(a, b, c) => registers[c] = registers[a] * b,
-        Instruction::Banr(a, b, c) => registers[c] = registers[a] & registers[b],
-        Instruction::Bani(a, b, c) => registers[c] = registers[a] & b,
-        Instruction::Borr(a, b, c) => registers[c] = registers[a] | registers[b],
-        Instruction::Bori(a, b, c) => registers[c] = registers[a] | b,
-        Instruction::Setr(a, _, c) => registers[c] = registers[a],
-        Instruction::Seti(a, _, c) => registers[c] = a,
-        Instruction::Gtir(a, b, c) => registers[c] = if            a >  registers[b] { 1 } else { 0 },
-        Instruction::Gtri(a, b, c) => registers[c] = if registers[a] >  b            { 1 } else { 0 },
-        Instruction::Gtrr(a, b, c) => registers[c] = if registers[a] >  registers[b] { 1 } else { 0 },
-        Instruction::Eqir(a, b, c) => registers[c] = if            a == registers[b] { 1 } else { 0 },
-        Instruction::Eqri(a, b, c) => registers[c] = if registers[a] == b            { 1 } else { 0 },
-        Instruction::Eqrr(a, b, c) => registers[c] = if registers[a] == registers[b] { 1 } else { 0 },
-        Instruction::Error() => {}
+        ("addr", a, b, c) => registers[c] = registers[a] + registers[b],
+        ("addi", a, b, c) => registers[c] = registers[a] + b,
+        ("mulr", a, b, c) => registers[c] = registers[a] * registers[b],
+        ("muli", a, b, c) => registers[c] = registers[a] * b,
+        ("banr", a, b, c) => registers[c] = registers[a] & registers[b],
+        ("bani", a, b, c) => registers[c] = registers[a] & b,
+        ("borr", a, b, c) => registers[c] = registers[a] | registers[b],
+        ("bori", a, b, c) => registers[c] = registers[a] | b,
+        ("setr", a, _, c) => registers[c] = registers[a],
+        ("seti", a, _, c) => registers[c] = a,
+        ("gtir", a, b, c) => registers[c] = if            a >  registers[b] { 1 } else { 0 },
+        ("gtri", a, b, c) => registers[c] = if registers[a] >  b            { 1 } else { 0 },
+        ("gtrr", a, b, c) => registers[c] = if registers[a] >  registers[b] { 1 } else { 0 },
+        ("eqir", a, b, c) => registers[c] = if            a == registers[b] { 1 } else { 0 },
+        ("eqri", a, b, c) => registers[c] = if registers[a] == b            { 1 } else { 0 },
+        ("eqrr", a, b, c) => registers[c] = if registers[a] == registers[b] { 1 } else { 0 },
+        _ => {}
     };
 }
 
-fn parse_input (input: &str) -> (usize, Vec<Instruction>) {
+fn parse_input (input: &str) -> (usize, Vec<(&str, usize, usize, usize)>) {
     let mut lines = input.lines();
     let ip_line = lines.next().unwrap();
     let ip = Regex::new(r"\d+").unwrap()
@@ -60,29 +40,23 @@ fn parse_input (input: &str) -> (usize, Vec<Instruction>) {
             let b: usize = words.next().unwrap().parse().unwrap();
             let c: usize = words.next().unwrap().parse().unwrap();
 
-            return match op_code {
-                "addr" => Instruction::Addr(a, b, c),
-                "addi" => Instruction::Addi(a, b, c),
-                "mulr" => Instruction::Mulr(a, b, c),
-                "muli" => Instruction::Muli(a, b, c),
-                "banr" => Instruction::Banr(a, b, c),
-                "bani" => Instruction::Bani(a, b, c),
-                "borr" => Instruction::Borr(a, b, c),
-                "bori" => Instruction::Bori(a, b, c),
-                "setr" => Instruction::Setr(a, b, c),
-                "seti" => Instruction::Seti(a, b, c),
-                "gtir" => Instruction::Gtir(a, b, c),
-                "gtri" => Instruction::Gtri(a, b, c),
-                "gtrr" => Instruction::Gtrr(a, b, c),
-                "eqir" => Instruction::Eqir(a, b, c),
-                "eqri" => Instruction::Eqri(a, b, c),
-                "eqrr" => Instruction::Eqrr(a, b, c),
-                _      => Instruction::Error()
-            }
+            return (op_code, a, b, c);
         })
         .collect();
 
     return (ip, instructions)
+}
+
+fn display(instruction_number: &usize, registers: &[usize; 6], opcodes: &Vec<(&str, usize, usize, usize)>) {
+    for (id, opcode) in opcodes.iter().enumerate() {
+        if id == *instruction_number {
+            print!("==> ");
+        } else {
+            if id < 10 { print!(" {}  ", id) } else { print!("{}  ", id) };
+        }
+        println!("{:?}", opcode);
+    }
+    println!("{:?}", registers);
 }
 
 pub fn part1 (input: &str) -> String {
@@ -98,7 +72,11 @@ pub fn part1 (input: &str) -> String {
 }
 
 pub fn part2 (input: &str) -> String {
-    return String::from(input);
+    let r3: u64 = 10551330;
+    let out: u64 = (1..r3+1)
+        .filter(|x| r3 % x == 0)
+        .sum();
+    return format!("{}", out);
 }
 
 #[cfg(test)]
