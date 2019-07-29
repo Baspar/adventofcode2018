@@ -47,17 +47,17 @@ fn parse_input (input: &str) -> (usize, Vec<(&str, usize, usize, usize)>) {
     return (ip, instructions)
 }
 
-fn display(instruction_number: &usize, registers: &[usize; 6], opcodes: &Vec<(&str, usize, usize, usize)>) {
-    for (id, opcode) in opcodes.iter().enumerate() {
-        if id == *instruction_number {
-            print!("==> ");
-        } else {
-            if id < 10 { print!(" {}  ", id) } else { print!("{}  ", id) };
-        }
-        println!("{:?}", opcode);
-    }
-    println!("{:?}", registers);
-}
+// fn display(instruction_number: &usize, registers: &[usize; 6], opcodes: &Vec<(&str, usize, usize, usize)>) {
+//     for (id, opcode) in opcodes.iter().enumerate() {
+//         if id == *instruction_number {
+//             print!("==> ");
+//         } else {
+//             if id < 10 { print!(" {}  ", id) } else { print!("{}  ", id) };
+//         }
+//         println!("{:?}", opcode);
+//     }
+//     println!("{:?}", registers);
+// }
 
 pub fn part1 (input: &str) -> String {
     let mut registers = [0usize; 6];
