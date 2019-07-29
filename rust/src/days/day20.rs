@@ -61,8 +61,19 @@ pub fn part1 (input: &str) -> String {
 }
 
 pub fn part2 (input: &str) -> String {
-    return String::from(input);
+    let map = make_map(input);
+
+    let mut nb_above_1000 = 0;
+    for (_, m) in map {
+        for (_, distance) in m {
+            if distance >= 1000 {
+                nb_above_1000 += 1;
+            }
+        }
+    }
+    return format!("{}", nb_above_1000);
 }
+
 
 #[cfg(test)]
 mod tests {
