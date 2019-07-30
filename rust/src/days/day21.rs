@@ -1,4 +1,5 @@
 use regex::Regex;
+use std::collections::HashSet;
 
 fn apply_opcode(registers: &mut [usize; 6], opcode: &(&str, usize, usize, usize)) {
     match *opcode {
@@ -59,7 +60,28 @@ pub fn part1 (input: &str) -> String {
 }
 
 pub fn part2 (input: &str) -> String {
-    return String::from(input);
+    let mut registers = [0usize; 6];
+    let (ip, instructions) = parse_input(input);
+    let mut instruction_number = 0;
+    let mut already_seen: HashSet<usize> = HashSet::new();
+    let mut last = 0;
+
+    loop {
+        apply_opcode(&mut registers, &instructions[instruction_number]);
+        registers[ip] += 1;
+        instruction_number = registers[ip];
+
+        if instruction_number == 28 {
+            if let Some(_) = already_seen.get(&registers[5]) {
+                println!("Last: {}", last);
+                break;
+            }
+
+            already_seen.insert(registers[5]);
+            last = registers[5];
+        }
+    }
+    return format!("{}", last);
 }
 
 // #ip 2
